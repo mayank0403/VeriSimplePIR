@@ -123,10 +123,13 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
     start = currentDateTime();
     //Matrix A = pir.FakeInit();
     for (uint64_t i = 0; i < iters; i++) {
+        //std::cout << "Sampling random A" << std::endl;
         Matrix A = pir.Init();
     }
+    end = currentDateTime();
     double query_time = (end-start)/iters;
-    std::cout << "A expansion time: " << query_time << " ms\n";
+    std::cout << "A expansion time: " << query_time << " ms | " <<  query_time/1000 << " sec" << std::endl;
+    Matrix A = pir.Init();
 
     Matrix H = pir.GenerateFakeHint();
     std::cout << "offline download size = " << H.rows*H.cols*sizeof(Elem) / (1ULL << 20) << " MiB\n";
@@ -143,8 +146,8 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
         pir.Query(A, index);
     }
     end = currentDateTime();
-    double query_time = (end-start)/iters;
-    std::cout << "Query generation time: " << query_time << " ms\n";
+    query_time = (end-start)/iters;
+    std::cout << "Query generation time: " << query_time << " ms | " <<  query_time/1000 << " sec" << std::endl;
 
     Matrix ct = std::get<0>(ct_sk);
     Matrix sk = std::get<1>(ct_sk);
@@ -157,7 +160,7 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
     }
     end = currentDateTime();
     double answer_time = (end-start)/iters;
-    std::cout << "Answer generation time: " << answer_time << " ms\n";
+    std::cout << "Answer generation time: " << answer_time << " ms | " <<  answer_time/1000 << " sec" << std::endl;
 
     start = currentDateTime();
     for (uint64_t i = 0; i < iters; i++) {
@@ -165,7 +168,7 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
     }
     end = currentDateTime();
     double verify_time = (end-start)/iters;
-    std::cout << "Verification time: " << verify_time << " ms\n";
+    std::cout << "Verification time: " << verify_time << " ms | " <<  verify_time/1000 << " sec" << std::endl;
 
     entry_t res;
     start = currentDateTime();
@@ -174,10 +177,10 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
     }
     end = currentDateTime();
     double recovery_time = (end-start)/iters;
-    std::cout << "Recovery time: " << recovery_time << " ms\n";
+    std::cout << "Recovery time: " << recovery_time << " ms | " <<  recovery_time/1000 << " sec" << std::endl;
 
     double total_time = query_time + answer_time + verify_time + recovery_time;
-    std::cout << "Total time: " << total_time << " ms\n";
+    std::cout << "Total time: " << total_time << " ms | " <<  total_time/1000 << " sec" << std::endl;
 }
 
 int main() {
