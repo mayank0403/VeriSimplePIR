@@ -110,6 +110,7 @@ void benchmark_verisimplepir_offline_client_compute(const VeriSimplePIR& pir, co
 void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose = false) {
 
     double start, end;
+    uint64_t iters = 10;
 
     std::cout << "database params: "; pir.dbParams.print();
     std::cout << "sampling random db matrix...\n";
@@ -119,7 +120,13 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
     const uint64_t index = 1;
 
     std::cout << "sampling random A matrix...\n";
-    Matrix A = pir.FakeInit();
+    start = currentDateTime();
+    //Matrix A = pir.FakeInit();
+    for (uint64_t i = 0; i < iters; i++) {
+        Matrix A = pir.Init();
+    }
+    double query_time = (end-start)/iters;
+    std::cout << "A expansion time: " << query_time << " ms\n";
 
     Matrix H = pir.GenerateFakeHint();
     std::cout << "offline download size = " << H.rows*H.cols*sizeof(Elem) / (1ULL << 20) << " MiB\n";
@@ -130,7 +137,7 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
     const Matrix Z = std::get<1>(C_and_Z);
 
     auto ct_sk = pir.Query(A, index);
-    uint64_t iters = 10;
+    
     start = currentDateTime();
     for (uint64_t i = 0; i < iters; i++) {
         pir.Query(A, index);
