@@ -176,13 +176,13 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
 int main() {
     // const uint64_t N = 1ULL<<30;
     // const uint64_t N = 1ULL<<33;
-    const uint64_t N = 4*(1ULL<<33);
+    const uint64_t N = (1ULL<<30);
     // const uint64_t N = 8*(1ULL<<33);
     // const uint64_t N = 16*(1ULL<<33);
     // const uint64_t N = 1ULL<<35;
     // const uint64_t d = 2048;
     // const uint64_t d = 128;
-    const uint64_t d = 1;
+    const uint64_t d = 8;
 
     // const bool verbose = true;
     const bool verbose = false;
@@ -190,8 +190,8 @@ int main() {
     std::cout << "Input params: N = " << N << " d = " << d << std::endl;
     std::cout << "database size: " << N*d / (8.0*(1ULL<<20)) << " MiB\n";
 
-    // const bool honest_hint = true;
-    const bool honest_hint = false;
+    const bool honest_hint = true;
+    // const bool honest_hint = false;
     VeriSimplePIR pir(
         N, d, 
         true,   // allowTrivial
@@ -201,6 +201,11 @@ int main() {
         1,   // batch size
         true,  // preprocessed
         honest_hint);
+
+    if (honest_hint)
+        std::cout << "\n\n     <---- Honest Hint ------>       \n\n\n";
+
+    assert(honest_hint);
 
     std::cout << "database params: "; pir.dbParams.print();
 
