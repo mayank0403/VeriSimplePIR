@@ -36,7 +36,7 @@ public:
     using ui128 = lbcrypto::ui128;
     using ubi = lbcrypto::ubi;
 
-    static constexpr uint64_t n = (sizeof(Elem) <= 4) ? 1024 : 2048;  // number of columns of A. morally, the security parameter
+    static constexpr uint64_t n = (sizeof(Elem) <= 4) ? 1408 : 2816;  // number of columns of A. morally, the security parameter
     Elem p;  // plaintext modulus
     // the ciphertext modulus q is implicit in the data type Elem
     //      logq is either 32 or 64 depending on the size of Elem.

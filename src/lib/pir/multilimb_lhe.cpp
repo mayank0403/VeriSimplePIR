@@ -116,6 +116,7 @@ Multi_Limb_Matrix Multi_Limb_LHE::encrypt(const Multi_Limb_Matrix& A, const Mult
     // constant(ciphertext, -1, kappa); std::cout << "change me back!\n";
 
     Multi_Limb_Matrix A_sk(ciphertext.rows, ciphertext.cols);
+    //std::cout << "here" << std::endl;
     A_sk.q_data = matMulVec(A.q_data, sk.q_data); 
     A_sk.kappa_data = matMulVec(A.kappa_data, sk.kappa_data, kappa); 
 

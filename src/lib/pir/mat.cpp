@@ -356,6 +356,7 @@ Matrix matMulVec(const Matrix& a, const Matrix& b, const Elem modulus) {
     const size_t bRows = b.rows;
 
     if (aCols != bRows || b.cols != 1) {
+        std::cout << aCols << " " << bRows << " " << b.cols << std::endl;
         std::cout << "Input dimension mismatch!\n";
         assert(false);
     }
