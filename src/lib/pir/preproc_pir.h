@@ -141,7 +141,10 @@ public:
     Matrix GenerateHint(const Matrix& A, const Matrix& D) const;
     Matrix GenerateFakeHint() const;
 
-    std::pair<Matrix, Matrix> Query(const Matrix& A, const uint64_t index) const;  
+    Matrix GetSk() const;
+
+    std::pair<Matrix, Matrix> Query(const Matrix& A, const uint64_t index) const; 
+    Matrix QueryGivenAs(const Matrix& As, const uint64_t index) const;  
     // batch query. output is still ciphertext and secret key pair  
     // std::pair<Matrix, Matrix> Query(const Matrix& A, const std::vector<uint64_t> indices) const;
     
@@ -155,6 +158,10 @@ public:
 
     entry_t Recover(
         const Matrix& hint, const Matrix& ciphertext, 
+        const Matrix& secretKey, const uint64_t index) const;
+
+    entry_t RecoverGivenHs(
+        const Matrix& Hs, const Matrix& ciphertext, 
         const Matrix& secretKey, const uint64_t index) const;
 };
 

@@ -26,8 +26,12 @@ public:
     void randomPlaintext(Matrix& pt) const;
 
     // plaintext has length m, where m is in the parameter used to sample m
-    Matrix encrypt(const Matrix& A, const Matrix& sk, const Matrix& pt) const;  
+    Matrix encrypt(const Matrix& A, const Matrix& sk, const Matrix& pt) const; 
+
+    Matrix encryptGivenAs(const Matrix& As, const Matrix& pt) const;  
 
     // length of ct should match the # of rows of H
     Matrix decrypt(const Matrix& H, const Matrix& sk, const Matrix& ct) const;
+
+    Matrix decryptGivenHs(const Matrix& Hs, const Matrix& sk, const Matrix& ct) const;
 };

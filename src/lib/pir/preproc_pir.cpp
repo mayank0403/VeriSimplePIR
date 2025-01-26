@@ -344,6 +344,29 @@ std::pair<Matrix, Matrix> VeriSimplePIR::Query(const Matrix& A, const uint64_t i
     return std::make_pair(ciphertext, secretKey);
 }
 
+Matrix VeriSimplePIR::GetSk() const {
+    Matrix secretKey = lhe.sampleSecretKey();
+    return secretKey;
+}
+
+Matrix VeriSimplePIR::QueryGivenAs(const Matrix& As, const uint64_t index) const {
+    if (index >= N) {
+        std::cout << "index out of range!\n";
+        assert(false);
+    }
+
+    const uint64_t index_col = dbParams.indexToColumn(index);
+    // std::cout << "Query index column = " << index_col << std::endl;
+
+    Matrix pt(m, 1);
+    constant(pt, 0);
+    pt.data[index_col] = 1;
+
+    Matrix ciphertext = lhe.encryptGivenAs(As, pt);
+
+    return ciphertext;
+}
+
 Matrix VeriSimplePIR::Answer(const Matrix& ciphertext, const Matrix& D) const {
     if (ciphertext.cols == 1) {
         Matrix ans = matMulVec(D, ciphertext);
@@ -399,6 +422,20 @@ entry_t VeriSimplePIR::Recover(const Matrix& hint, const Matrix& ciphertext, con
     }
   
     Matrix pt = lhe.decrypt(hint, secretKey, ciphertext);
+    // std::cout << "Recover pt =\n"; print(pt);
+    return dbParams.recover(&pt.data[index_row], index);
+}
+
+entry_t VeriSimplePIR::RecoverGivenHs(const Matrix& Hs, const Matrix& ciphertext, const Matrix& secretKey, const uint64_t index) const {
+    // const uint64_t index_row = index / m;
+    const uint64_t index_row = dbParams.indexToRow(index);
+    // std::cout << "Recover index row = " << index_row << std::endl;
+    if (index_row >= ell) {
+        std::cout << "index row is too big!\n";
+        assert(false);
+    }
+  
+    Matrix pt = lhe.decryptGivenHs(Hs, secretKey, ciphertext);
     // std::cout << "Recover pt =\n"; print(pt);
     return dbParams.recover(&pt.data[index_row], index);
 }

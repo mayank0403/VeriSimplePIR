@@ -48,6 +48,26 @@ Matrix LHE::encrypt(const Matrix& A, const Matrix& sk, const Matrix& pt) const {
     return ciphertext;
 };
 
+Matrix LHE::encryptGivenAs(const Matrix& As, const Matrix& pt) const {
+    if (As.rows != pt.rows) {
+        std::cout << "Plaintext dimension mismatch!\n";
+        assert(false);
+    }
+
+    Matrix ciphertext(As.rows, 1);
+    error(ciphertext);
+    // constant(&ciphertext); std::cout << "change me back!\n";
+
+    matAddInPlace(ciphertext, As);
+
+    // scale plaintext
+    Matrix pt_scaled = matMulScalar(pt, Delta);
+
+    matAddInPlace(ciphertext, pt_scaled);
+
+    return ciphertext;
+};
+
 // length of ct should match the # of rows of H
 Matrix LHE::decrypt(const Matrix& H, const Matrix& sk, const Matrix& ct) const {
     if (H.rows != ct.rows) {
@@ -63,6 +83,30 @@ Matrix LHE::decrypt(const Matrix& H, const Matrix& sk, const Matrix& ct) const {
     Matrix H_sk = matMulVec(H, sk);
 
     Matrix scaled_pt = matSub(ct, H_sk);
+
+    Matrix pt = matDivScalar(scaled_pt, Delta);
+    for (size_t i = 0; i < pt.rows; i++) {
+        if (pt.data[i] == p) {
+            pt.data[i] = 0;
+        }
+    }
+
+    return pt;
+}
+
+// length of ct should match the # of rows of H
+Matrix LHE::decryptGivenHs(const Matrix& Hs, const Matrix& sk, const Matrix& ct) const {
+    if (Hs.rows != ct.rows) {
+        std::cout << "Ciphertext dimension mismatch!\n";
+        assert(false);
+    }
+
+    if (sk.cols != 1 || ct.cols != 1) {
+        std::cout << "secret key or ciphertext are not column vectors!\n";
+        assert(false);
+    }
+
+    Matrix scaled_pt = matSub(ct, Hs);
 
     Matrix pt = matDivScalar(scaled_pt, Delta);
     for (size_t i = 0; i < pt.rows; i++) {

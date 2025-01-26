@@ -5,7 +5,7 @@ int main() {
     std::vector<std::vector<uint64_t>> N_d_params;
 
     N_d_params.push_back(std::vector<uint64_t>{(1ULL << 30), 8});
-    // N_d_params.push_back(std::vector<uint64_t>{(1ULL << 24), 2048});
+    //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 24), 2048});
 
     //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 36), 1});
     // N_d_params.push_back(std::vector<uint64_t>{(1ULL << 25), 2048});
