@@ -247,6 +247,7 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     Multi_Limb_Matrix A_2 = pir.PreprocInit();
     end = currentDateTime();
     std::cout << "Global preprocessing A1, A2 expansion time: " << (end-start) << " ms\n";
+    dict[CLIENT_PREPR_S] += (end-start)/1000;
 
     start = currentDateTime();
     Matrix H = pir.GenerateFakeHint();

@@ -359,15 +359,21 @@ Matrix VeriSimplePIR::QueryGivenAs(const Matrix& As, const uint64_t index) const
         std::cout << "index out of range!\n";
         assert(false);
     }
-
+    //double start, end;
+    //start = currentDateTime();
     const uint64_t index_col = dbParams.indexToColumn(index);
     // std::cout << "Query index column = " << index_col << std::endl;
+    //end = currentDateTime();
+    //std::cout << "\nDB INDEX TO COLUMN time (ms) " << (end-start) << "\n" << std::endl;
 
     Matrix pt(m, 1);
     constant(pt, 0);
     pt.data[index_col] = 1;
 
+    //start = currentDateTime();
     Matrix ciphertext = lhe.encryptGivenAs(As, pt);
+    //end = currentDateTime();
+    //std::cout << "\nEncryption given As time (ms) " << (end-start) << "\n" << std::endl;
 
     return ciphertext;
 }
@@ -439,8 +445,15 @@ entry_t VeriSimplePIR::RecoverGivenHs(const Matrix& Hs, const Matrix& ciphertext
         std::cout << "index row is too big!\n";
         assert(false);
     }
-  
+    double start, end;
+    //start = currentDateTime();
     Matrix pt = lhe.decryptGivenHs(Hs, secretKey, ciphertext);
     // std::cout << "Recover pt =\n"; print(pt);
+    //end = currentDateTime();
+    //std::cout << "\nDecryption time (ms) " << (end-start) << "\n" << std::endl;
+
+    //start = currentDateTime();
     return dbParams.recover(&pt.data[index_row], index);
+    //end = currentDateTime();
+    //std::cout << "\nRecover actual record time (ms) " << (end-start) << "\n" << std::endl;
 }

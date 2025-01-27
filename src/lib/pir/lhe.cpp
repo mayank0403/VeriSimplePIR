@@ -55,8 +55,13 @@ Matrix LHE::encryptGivenAs(const Matrix& As, const Matrix& pt) const {
     }
 
     Matrix ciphertext(As.rows, 1);
+
+    double start, end;
+    start = currentDateTime();
     error(ciphertext);
     // constant(&ciphertext); std::cout << "change me back!\n";
+    end = currentDateTime();
+    std::cout << "Encryption error sampling time (ms) " << (end-start) << std::endl;
 
     matAddInPlace(ciphertext, As);
 
