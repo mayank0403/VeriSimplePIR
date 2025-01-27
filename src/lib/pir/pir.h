@@ -48,6 +48,7 @@ public:
     Matrix FakeInit() const;
     
     Matrix GenerateHint(const Matrix& A, const Matrix& D) const;
+    Matrix GenerateHintPackedIn(const Matrix& A, const PackedMatrix& D) const;
     Matrix GenerateFakeHint() const;
 
     void HashAandH(unsigned char * hash, const Matrix& A, const Matrix& H) const;

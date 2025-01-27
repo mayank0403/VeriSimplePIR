@@ -23,6 +23,11 @@ Matrix VLHEPIR::GenerateHint(const Matrix& A, const Matrix& D) const {
     return H;
 }
 
+Matrix VLHEPIR::GenerateHintPackedIn(const Matrix& A, const PackedMatrix& D) const {
+    Matrix H = matMulColPacked(D, A);
+    return H;
+}
+
 Matrix VLHEPIR::GenerateFakeHint() const {
     Matrix H(ell, lhe.n);
     random_fast(H);

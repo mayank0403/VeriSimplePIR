@@ -318,6 +318,11 @@ Matrix VeriSimplePIR::GenerateHint(const Matrix& A, const Matrix& D) const {
     return H;
 }
 
+Matrix VeriSimplePIR::GenerateHintPackedIn(const Matrix& A, const PackedMatrix& D) const {
+    Matrix H = matMulColPacked(D, A);
+    return H;
+}
+
 Matrix VeriSimplePIR::GenerateFakeHint() const {
     Matrix H(ell, lhe.n);
     random_fast(H);

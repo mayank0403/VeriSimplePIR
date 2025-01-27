@@ -181,15 +181,15 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
 }
 
 // All recorded metrics
-#define HINT_MB "Hints (MiB)"
-#define ONLINE_STATE_KB "Online State (KiB)"
-#define OFFLINE_UP_KB "Offline Up (KiB)"
-#define OFFLINE_DOWN_KB "Offline Down (KiB)"
-#define PREPARE_UP_KB "Prep Up (Kib)"
-#define PREPARE_DOWN_KB "Prep Down (KiB)"
-#define QUERY_UP_KB "Query Up (KiB)"
-#define QUERY_DOWN_KB "Query Down (KiB)"
-#define GLOBAL_PREPR_S "Global Prepr (S)"
+//#define HINT_MB "Hints (MiB)"
+//#define ONLINE_STATE_KB "Online State (KiB)"
+//#define OFFLINE_UP_KB "Offline Up (KiB)"
+//#define OFFLINE_DOWN_KB "Offline Down (KiB)"
+//#define PREPARE_UP_KB "Prep Up (Kib)"
+//#define PREPARE_DOWN_KB "Prep Down (KiB)"
+//#define QUERY_UP_KB "Query Up (KiB)"
+//#define QUERY_DOWN_KB "Query Down (KiB)"
+//#define GLOBAL_PREPR_S "Global Prepr (S)"
 #define SV_CLIENT_SPEC_PREPR_S "Server Per-Client Prepr (s)"
 #define CLIENT_PREPR_S "Client Local Prepr (s)"
 #define CLIENT_PREP_PRE_S "Client Prepa Pre Req (s)"
@@ -199,20 +199,21 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
 #define SERVER_Q_RESP_S "Query: Server Comp (s)"
 #define CLIENT_Q_DEC_MS "Query: Client Decryption (ms)"
 #define CLIENT_Q_VER_MS "Query: Client Verification (ms)"
+#define VSPIR_UNCOMP_Z "VSPIR Uncompr. Z (KiB)"
 
 void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose = false) {
 
     // Important metrics
     map<string, double> dict;
-    dict[HINT_MB] = 0; // mb is MiB, kb is KiB, s is sec, ms is ms
-    dict[ONLINE_STATE_KB] = 0;
-    dict[OFFLINE_UP_KB] = 0;
-    dict[OFFLINE_DOWN_KB] = 0;
-    dict[PREPARE_UP_KB] = 0;
-    dict[PREPARE_DOWN_KB] = 0;
-    dict[QUERY_UP_KB] = 0;
-    dict[QUERY_DOWN_KB] = 0;
-    dict[GLOBAL_PREPR_S] = 0;
+    //dict[HINT_MB] = 0; // mb is MiB, kb is KiB, s is sec, ms is ms
+    //dict[ONLINE_STATE_KB] = 0;
+    //dict[OFFLINE_UP_KB] = 0;
+    //dict[OFFLINE_DOWN_KB] = 0;
+    //dict[PREPARE_UP_KB] = 0;
+    //dict[PREPARE_DOWN_KB] = 0;
+    //dict[QUERY_UP_KB] = 0;
+    //dict[QUERY_DOWN_KB] = 0;
+    //dict[GLOBAL_PREPR_S] = 0;
     dict[SV_CLIENT_SPEC_PREPR_S] = 0;
     dict[CLIENT_PREPR_S] = 0;
     dict[CLIENT_PREP_PRE_S] = 0;
@@ -222,28 +223,39 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     dict[SERVER_Q_RESP_S] = 0;
     dict[CLIENT_Q_DEC_MS] = 0;
     dict[CLIENT_Q_VER_MS] = 0;
+    dict[VSPIR_UNCOMP_Z] = 0;
 
     double start, end;
 
     std::cout << "database params: "; pir.dbParams.print();
     std::cout << "sampling random db matrix...\n";
 
-    PackedMatrix D_packed = packMatrixHardCoded(pir.dbParams.ell, pir.dbParams.m, pir.dbParams.p);
+    const PackedMatrix D_packed = packMatrixHardCoded(pir.dbParams.ell, pir.dbParams.m, pir.dbParams.p);
     std::cout << "sampling random db matrix...\n";
     Matrix D_T(pir.dbParams.m, pir.dbParams.ell);
     random_fast(D_T, pir.dbParams.p);
-    std::cout << "sampled database.\n";
+    //Matrix D(pir.dbParams.ell, pir.dbParams.m);
+    //random_fast(D, pir.dbParams.p);
+    std::cout << "sampled databases.\n";
 
     unsigned char preproc_hash[SHA256_DIGEST_LENGTH];
 
     const uint64_t index = 1;
 
-    Matrix A_1 = pir.FakeInit();
-    Multi_Limb_Matrix A_2 = pir.PreprocFakeInit();
+    start = currentDateTime();
+    Matrix A_1 = pir.Init();
+    Multi_Limb_Matrix A_2 = pir.PreprocInit();
+    end = currentDateTime();
+    std::cout << "Global preprocessing A1, A2 expansion time: " << (end-start) << " ms\n";
 
+    start = currentDateTime();
     Matrix H = pir.GenerateFakeHint();
+    //Matrix H = pir.GenerateHintPackedIn(A_1, D_packed);
     std::cout << "Hint size = " << H.rows*H.cols*sizeof(Elem) / (1ULL << 20) << " MiB\n";
     Multi_Limb_Matrix H_2 = pir.PreprocGenerateFakeHint();
+    //Multi_Limb_Matrix H_2 = pir.PreprocGenerateHint(A_2, D_T);
+    end = currentDateTime();
+    std::cout << "Global preprocessing H1, H2 generation time: " << (end-start) << " ms\n";
     std::cout << "Hint (H for offline D^TC^T) main limb size = " << H_2.q_data.rows*H_2.q_data.cols*sizeof(Elem) / (1ULL << 20) << " MiB\n";
     double log_kappa_bytes = std::log2(pir.preproc_lhe.kappa) / 8.0;
     if (log_kappa_bytes < 1.0/8.0) {
@@ -258,6 +270,7 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     const auto preproc_ct_sk_pair = pir.PreprocClientMessage(A_2, C);
     end = currentDateTime();
     std::cout << "Offline client message generation time: " << (end-start) << " ms\n";
+    dict[CLIENT_PREPR_S] += (end-start)/1000;
 
     const auto preproc_cts = std::get<0>(preproc_ct_sk_pair);
     const auto preproc_sks = std::get<1>(preproc_ct_sk_pair);
@@ -269,12 +282,14 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     preproc_res_cts = pir.PreprocAnswer(preproc_cts, D_T);
     end = currentDateTime();
     std::cout << "Preproc answer generation time: " << (end-start) << " ms\n";
+    dict[SV_CLIENT_SPEC_PREPR_S] += (end-start)/1000;
 
     Matrix preproc_Z;
     start = currentDateTime();
     preproc_Z = pir.PreprocProve(preproc_hash, preproc_cts, preproc_res_cts, D_T);
     end = currentDateTime();
     std::cout << "Preproc proof generation time: " << (end-start) << " ms\n";
+    dict[SV_CLIENT_SPEC_PREPR_S] += (end-start)/1000;
     
     std::cout << "Preprocessing phase larger Z (proof) size = " << preproc_Z.rows*preproc_Z.cols*sizeof(Elem) / (1ULL << 10) << " KiB\n";
 
@@ -283,18 +298,22 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     pir.PreprocVerify(A_2, H_2, preproc_hash, preproc_cts, preproc_res_cts, preproc_Z, fake);
     end = currentDateTime();
     std::cout << "Preproc verification time: " << (end-start) << " ms\n";
+    dict[CLIENT_PREPR_S] += (end-start)/1000;
 
     start = currentDateTime();
     const Matrix Z = pir.PreprocRecoverZ(H_2, preproc_sks, preproc_res_cts);
     end = currentDateTime();
     std::cout << "Preproc Z decryption time: " << (end-start) << " ms\n";
+    dict[CLIENT_PREPR_S] += (end-start)/1000;
 
     std::cout << "Online phase Z (proof) size = " << Z.rows*Z.cols*sizeof(Elem) / (1ULL << 10) << " KiB\n";
+    dict[VSPIR_UNCOMP_Z] += Z.rows*Z.cols*sizeof(Elem) / (1ULL << 10);
 
     start = currentDateTime();
     pir.VerifyPreprocZ(Z, A_1, C, H, fake);
     end = currentDateTime();
     std::cout << "Offline proof verification time: " << (end-start) << " ms\n";
+    dict[CLIENT_PREPR_S] += (end-start)/1000;
 
     std::cout << "sampling random A matrix...\n";
     start = currentDateTime();
@@ -302,20 +321,26 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     end = currentDateTime();
     double a_exp_time = (end-start);
     std::cout << "A expansion time: " << a_exp_time << " ms | " <<  a_exp_time/1000 << " sec" << std::endl;
+    dict[CLIENT_PREP_PRE_S] += a_exp_time/1000;
 
     double start_prepare, end_prepare;
     start_prepare = currentDateTime();
-    Matrix sk = pir.GetSk();
+    
     start = currentDateTime();
+    Matrix sk = pir.GetSk();
     Matrix As = matMulVec(A, sk);
     end = currentDateTime();
     double as_time = (end-start);
     std::cout << "Prepare As time: " << as_time << " ms | " <<  as_time/1000 << " sec" << std::endl;
+    dict[CLIENT_PREP_PRE_S] += as_time/1000;
+
     start = currentDateTime();
     Matrix H_sk = matMulVec(H, sk);
     end = currentDateTime();
     double hs_time = (end-start);
     std::cout << "Prepare Hs time: " << hs_time << " ms | " <<  hs_time/1000 << " sec" << std::endl;
+    dict[CLIENT_PREP_PRE_S] += hs_time/1000;
+
     end_prepare = currentDateTime();
     double prepare_time = (end_prepare-start_prepare);
     std::cout << "Total Prepare time: " << prepare_time << " ms | " <<  prepare_time/1000 << " sec" << std::endl;
@@ -325,18 +350,21 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     end = currentDateTime();
     double query_time = (end-start);
     std::cout << "Query generation time (given As): " << query_time << " ms | " <<  query_time/1000 << " sec" << std::endl;
+    dict[CLIENT_Q_REQ_GEN_MS] += query_time;
 
     start = currentDateTime();
     Matrix ans = pir.Answer(ct, D_packed);
     end = currentDateTime();
     double answer_time = (end-start);
     std::cout << "Answer generation time: " << answer_time << " ms | " <<  answer_time/1000 << " sec" << std::endl;
+    dict[SERVER_Q_RESP_S] += answer_time/1000;
 
     start = currentDateTime();
     pir.FakePreVerify(ct, ans, Z, C);
     end = currentDateTime();
     double verify_time = (end-start);
     std::cout << "Verification time: " << verify_time << " ms | " <<  verify_time/1000 << " sec" << std::endl;
+    dict[CLIENT_Q_VER_MS] += verify_time;
 
     entry_t res;
     start = currentDateTime();
@@ -344,9 +372,11 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     end = currentDateTime();
     double recovery_time = (end-start);
     std::cout << "Recovery time: " << recovery_time << " ms | " <<  recovery_time/1000 << " sec" << std::endl;
+    dict[CLIENT_Q_DEC_MS] += recovery_time;
 
     //double total_time = query_time + answer_time + verify_time + recovery_time;
     //std::cout << "Total time: " << total_time << " ms | " <<  total_time/1000 << " sec" << std::endl;
+    std::cout << "----------------------------\n" << std::endl; 
     for (auto it : dict) {
     std::cout << it.first << " : " << it.second << std::endl;
   }
@@ -355,7 +385,7 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
 int main() {
     // const uint64_t N = 1ULL<<30;
     // const uint64_t N = 1ULL<<33;
-    const uint64_t N = (1ULL<<30); // @AGAM NOTE NOTE NOTE: Change BASIS every time
+    const uint64_t N = (1ULL<<34); // @AGAM NOTE NOTE NOTE: Change BASIS every time
     // const uint64_t N = 8*(1ULL<<33);
     // const uint64_t N = 16*(1ULL<<33);
     // const uint64_t N = 1ULL<<35;
