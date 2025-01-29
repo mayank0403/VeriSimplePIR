@@ -5,10 +5,10 @@ int main() {
     std::vector<std::vector<uint64_t>> N_d_params;
 
     //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 30), 8});
-    N_d_params.push_back(std::vector<uint64_t>{(1ULL << 34), 8});
+    N_d_params.push_back(std::vector<uint64_t>{(1ULL << 20), 64});
 
     //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 36), 1});
-    // N_d_params.push_back(std::vector<uint64_t>{(1ULL << 25), 2048});
+    //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 25), 2048});
 
     //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 37), 1});
     // N_d_params.push_back(std::vector<uint64_t>{(1ULL << 26), 2048});
@@ -25,7 +25,7 @@ int main() {
 
         Database db(N, d);
 
-        const bool allowTrivial = false;  // set to true to allow digests that are larger than the database
+        const bool allowTrivial = true;  // set to true to allow digests that are larger than the database
         const bool verbose      = false;  // set to true to output internals of parameter optimization script
         const bool simplePIR    = false;  // set to true to compute SimplePIR parameters. preproc cannot also be true
         const bool preproc      = true;   // set to true to compute VeriSimplePIR parameters. Set to false to compute VLHE parameters.
