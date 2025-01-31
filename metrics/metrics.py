@@ -210,8 +210,6 @@ def main():
             {'N': 20, 'd': 64},    # 2^20, 8B
             {'N': 20, 'd': 2048},  # 2^20, 256B
             {'N': 26, 'd': 64}, 
-            {'N': 30, 'd': 8}, 
-            {'N': 18, 'd': 262144}
         ]
         results = batch_run(verisimplepir_dir, configs)
         
