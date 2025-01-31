@@ -200,6 +200,7 @@ void benchmark_verisimplepir_online(const VeriSimplePIR& pir, const bool verbose
 #define CLIENT_Q_DEC_MS "Query: Client Decryption (ms)"
 #define CLIENT_Q_VER_MS "Query: Client Verification (ms)"
 #define VSPIR_UNCOMP_Z "VSPIR Uncompr. Z (KiB)"
+#define LONG_TERM_STATE_KB "Long Term State (KiB)"
 
 void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose = false) {
 
@@ -224,6 +225,7 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     dict[CLIENT_Q_DEC_MS] = 0;
     dict[CLIENT_Q_VER_MS] = 0;
     dict[VSPIR_UNCOMP_Z] = 0;
+    dict[LONG_TERM_STATE_KB] = 0;
 
     double start, end;
 
@@ -253,6 +255,7 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
     Matrix H = pir.GenerateFakeHint();
     //Matrix H = pir.GenerateHintPackedIn(A_1, D_packed);
     std::cout << "Hint size = " << H.rows*H.cols*sizeof(Elem) / (1ULL << 20) << " MiB\n";
+    dict[LONG_TERM_STATE_KB] += H.rows*H.cols*sizeof(Elem) / (1ULL << 10);
     Multi_Limb_Matrix H_2 = pir.PreprocGenerateFakeHint();
     //Multi_Limb_Matrix H_2 = pir.PreprocGenerateHint(A_2, D_T);
     end = currentDateTime();
@@ -309,6 +312,7 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
 
     std::cout << "Online phase Z (proof) size = " << Z.rows*Z.cols*sizeof(Elem) / (1ULL << 10) << " KiB\n";
     dict[VSPIR_UNCOMP_Z] += Z.rows*Z.cols*sizeof(Elem) / (1ULL << 10);
+    dict[LONG_TERM_STATE_KB] += Z.rows*Z.cols*sizeof(Elem) / (1ULL << 10);
 
     start = currentDateTime();
     pir.VerifyPreprocZ(Z, A_1, C, H, fake);
