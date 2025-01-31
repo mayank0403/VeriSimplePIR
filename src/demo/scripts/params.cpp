@@ -1,11 +1,11 @@
 #include "pir/pir.h"
-
+#include "../global_parameters.h"
 int main() {
 
     std::vector<std::vector<uint64_t>> N_d_params;
 
     //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 30), 8});
-    N_d_params.push_back(std::vector<uint64_t>{(1ULL << 20), 64});
+    N_d_params.push_back(std::vector<uint64_t>{(1ULL << N_VALUE), D_VALUE});
 
     //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 36), 1});
     //N_d_params.push_back(std::vector<uint64_t>{(1ULL << 25), 2048});

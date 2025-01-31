@@ -1,12 +1,13 @@
 #include "mat_packed.h"
-
+#include "../../demo/global_parameters.h"
 // #define BASIS 2
 // #define BASIS 4
 // #define BASIS 8
 // #define BASIS 9
 // #define BASIS 16
 // #define BASIS 20
-#define BASIS 26
+
+#define BASIS BASIS_VALUE
 #define COMPRESSION (sizeof(Elem)*8/BASIS)
 #define MASK (1ULL << BASIS) - 1
 

@@ -1,5 +1,6 @@
 #include "pir/preproc_pir.h"
 #include <map>
+#include "../global_parameters.h"
 
 void benchmark_verisimplepir_offline_server_compute(const VeriSimplePIR& pir, const bool verbose = false) {
 
@@ -386,13 +387,13 @@ void benchmark_verisimplepir_full(const VeriSimplePIR& pir, const bool verbose =
 int main() {
     // const uint64_t N = 1ULL<<30;
     // const uint64_t N = 1ULL<<33;
-    const uint64_t N = (1ULL<<34); // @AGAM NOTE NOTE NOTE: Change BASIS every time
+    const uint64_t N = (1ULL<<N_VALUE); // @AGAM NOTE NOTE NOTE: Change BASIS every time
     // const uint64_t N = 8*(1ULL<<33);
     // const uint64_t N = 16*(1ULL<<33);
     // const uint64_t N = 1ULL<<35;
     // const uint64_t d = 2048;
     // const uint64_t d = 128;
-    const uint64_t d = 8;
+    const uint64_t d = D_VALUE;
 
     // const bool verbose = true;
     const bool verbose = false;

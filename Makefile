@@ -6,6 +6,7 @@ HOST_SYSTEM = $(shell uname | cut -f 1 -d_)
 SYSTEM ?= $(HOST_SYSTEM)
 
 CPPSTD := -std=c++17 -fPIC 
+CXXFLAGS += -DN_VALUE=$(N) -DD_VALUE=$(d)
 
 ifeq ($(SYSTEM),Darwin)
 CC := /usr/local/opt/llvm/bin/clang++ $(CPPSTD)
