@@ -1,0 +1,69 @@
+=== preproc_pir_bench output ===
+Input params: N = 1073741824 d = 8
+database size: 1024 MiB
+HONEST HINT ASSUMPTION IS ON
+
+
+     <---- Honest Hint ------>       
+
+
+database params: Plaintext db params: m = 18918, ell = 18920, p = 16777216 = 2^24
+database params: Plaintext db params: m = 18918, ell = 18920, p = 16777216 = 2^24
+sampling random db matrix...
+sampling random db matrix...
+sampled databases.
+Global preprocessing A1, A2 expansion time: 16945.4 ms
+Hint size = 406 MiB
+Global preprocessing H1, H2 generation time: 681.864 ms
+Hint (H for offline D^TC^T) main limb size = 406 MiB
+Hint (H for offline D^TC^T) kappa limb size = 90.2271 MiB
+generating client message...
+Offline client message generation time: 8708.14 ms
+beginning server compute benchmarks
+Preproc answer generation time: 25994.4 ms
+Preproc proof generation time: 5273.07 ms
+Preprocessing phase larger Z (proof) size = 5912 KiB
+Preproc verification time: 14291.5 ms
+Preproc Z decryption time: 3679.13 ms
+Online phase Z (proof) size = 5911 KiB
+Offline proof verification time: 2769.86 ms
+sampling random A matrix...
+A expansion time: 5578.22 ms | 5.57822 sec
+Prepare As time: 43.3152 ms | 0.0433152 sec
+Prepare Hs time: 47.8461 ms | 0.0478461 sec
+Total Prepare time: 91.2153 ms | 0.0912153 sec
+Encryption error sampling time (ms) 120.832
+Query generation time (given As): 121.057 ms | 0.121057 sec
+Answer generation time: 147.044 ms | 0.147044 sec
+Verification time: 4.30571 ms | 0.00430571 sec
+Recovery time: 0.263614 ms | 0.000263614 sec
+----------------------------
+
+Client Local Prepr (s) : 46.394
+Client Prepa Post Req (s) : 0
+Client Prepa Pre Req (s) : 5.66938
+Query: Client Decryption (ms) : 0.263614
+Query: Client Req Gen (ms) : 121.057
+Query: Client Verification (ms) : 4.30571
+Query: Server Comp (s) : 0.147044
+Server Per-Client Prepr (s) : 31.2675
+Server Prepa Comp (s) : 0
+VSPIR Uncompr. Z (KiB) : 5911
+
+
+=== params output ===
+HONEST HINT ASSUMPTION IS ON
+N = 1073741824 = 2^30, d = 8
+db size = 1 GiB
+Plaintext db params: m = 18918, ell = 18920, p = 16777216 = 2^24
+logq = 64
+	Offline Phase
+	 Hints (MiB): hint download = 912.951 MiB
+	 Offline Up (KiB): preproc upload = 7317.42 KiB
+	 Offline Down (KiB): preproc download  = 10846.4 KiB
+
+	Online Phase
+	 Online State (KiB): client storage = 416240 KiB | 406.484 MiB
+	 Query Up (KiB): online upload size = 147.797 KiB
+	 Query Down (KiB): online download size = 147.812 KiB
+
