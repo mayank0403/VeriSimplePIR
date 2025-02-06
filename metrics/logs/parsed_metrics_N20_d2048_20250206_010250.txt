@@ -1,0 +1,19 @@
+Parsed Metrics:
+A Expansion Time (ms): 2722.05
+Global Prepr (s): 8343.33
+Server Per-Client Prepr (s): 7.45436
+Client Local Prepr (s): 22.836
+Client Prepa Pre Req (s): 2.76919
+Server Prepa Comp (s): 0.0
+Client Prepa Post Req (s): 0.0
+Query: Client Req Gen (ms): 58.8092
+Query: Server Comp (s): 0.0361162
+Query: Client Decryption (ms): 0.181362
+Query: Client Verification (ms): 2.15029
+VSPIR Uncompr. Z (KiB): 2873.0
+Hints (MiB): 443.976
+Online State (KiB): 205744.0
+Offline Up (KiB): 3570.52
+Offline Down (KiB): 5253.42
+Query Up (KiB): 71.8359
+Query Down (KiB): 73.0625

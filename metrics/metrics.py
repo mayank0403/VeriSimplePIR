@@ -4,6 +4,7 @@ import sys
 import os
 import time
 import argparse
+from datetime import datetime
 from typing import Dict, Optional
 
 class VeriSimplePIRRunner:
@@ -136,9 +137,27 @@ class VeriSimplePIRRunner:
             return None
             
         metrics = {}
+
+        # Save logs with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_filename = f"run_log_N{self.N}_d{self.d}_{timestamp}.txt"
+
+        # Create metrics/logs directory if it doesn't exist
+        log_dir = os.path.join(self.base_dir, "metrics/logs")
+        os.makedirs(log_dir, exist_ok=True)
+    
+        # Save full output
+        with open(os.path.join(log_dir, log_filename), 'w') as f:
+            f.write("=== preproc_pir_bench output ===\n")
+            f.write(preproc_output)
+            f.write("\n\n=== params output ===\n")
+            f.write(params_output)
         
+        print(f"Full run log saved to {log_filename}")
+            
         # Parse from preproc_pir_bench output
         preproc_patterns = {
+            'A Expansion Time (ms)': r'A expansion time: ([\d.]+) ms',  # Added this pattern
             'Global Prepr (s)': r'Global preprocessing [^:]+: ([\d.]+) ms',
             'Server Per-Client Prepr (s)': r'Server Per-Client Prepr \(s\) : ([\d.]+)',
             'Client Local Prepr (s)': r'Client Local Prepr \(s\) : ([\d.]+)',
@@ -151,7 +170,7 @@ class VeriSimplePIRRunner:
             'Query: Client Verification (ms)': r'Query: Client Verification \(ms\) : ([\d.]+)',
             'VSPIR Uncompr. Z (KiB)': r'VSPIR Uncompr\. Z \(KiB\) : ([\d.]+)'
         }
-        
+    
         # Parse from params output
         params_patterns = {
             'Hints (MiB)': r'Hints \(MiB\): hint download = ([\d.]+)',
@@ -161,17 +180,28 @@ class VeriSimplePIRRunner:
             'Query Up (KiB)': r'Query Up \(KiB\): online upload size = ([\d.]+)',
             'Query Down (KiB)': r'Query Down \(KiB\): online download size = ([\d.]+)'
         }
-        
+    
+        # Save parsed metrics
+        metrics_filename = f"parsed_metrics_N{self.N}_d{self.d}_{timestamp}.txt"
+    
         for metric, pattern in preproc_patterns.items():
             match = re.search(pattern, preproc_output)
             if match:
                 metrics[metric] = float(match.group(1))
-        
+    
         for metric, pattern in params_patterns.items():
             match = re.search(pattern, params_output)
             if match:
                 metrics[metric] = float(match.group(1))
-                
+            
+        # Save parsed metrics
+        with open(os.path.join(log_dir, metrics_filename), 'w') as f:
+            f.write("Parsed Metrics:\n")
+            for metric, value in metrics.items():
+                f.write(f"{metric}: {value}\n")
+            
+        print(f"Parsed metrics saved to {metrics_filename}")
+            
         return metrics
 
 def batch_run(base_dir: str, configs: list) -> list:
@@ -210,7 +240,10 @@ def main():
             {'N': 20, 'd': 64},    # 2^20, 8B
             {'N': 20, 'd': 2048},  # 2^20, 256B
             {'N': 26, 'd': 64}, 
+            {'N': 30, 'd': 8}, 
+            {'N': 18, 'd': 262144}
         ]
+        
         results = batch_run(verisimplepir_dir, configs)
         
         print("\nBatch Results:")
